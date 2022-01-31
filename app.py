@@ -99,17 +99,16 @@ class User_game(db.Model,SerializerMixin):
     last_name = db.Column(db.String(20))
     # addresses = db.relationship('USER_GAME_RATING', backref='person', lazy=True)
     
-    def __init__(self, first_name, last_name, Date_Created,Last_Accessed, addresses):
+    def __init__(self, first_name, last_name, Date_Created,Last_Accessed):
         self.Date_Created = Date_Created 
         self.Last_Accessed = Last_Accessed 
         self.first_name = first_name 
-        self.last_name = last_name 
-        self.addresses = addresses 
+        self.last_name = last_name
         
     
     def json(self):
         return {"first_name":self.first_name,
-            "last_name":self.last_name,"cnic":self.Date_Created,"date_of_birth":self.Last_Accessed, "addresses":self.addresses}
+            "last_name":self.last_name,"cnic":self.Date_Created,"date_of_birth":self.Last_Accessed}
 
 
 class Game(db.Model, SerializerMixin):
@@ -175,9 +174,7 @@ class GameView(Resource):
 
     def post(self):
         data = request.get_json()
-        dob= data["date_of_birth"]
-        date_of_birth1 = dob
-        new_user = Game(data['name'],data['last_name'],data['Platform'],data['Avg_Rating'])
+        new_user = Game(data['name'],data['Platform'],data['Avg_Rating'])
         
         db.session.add(new_user)
         db.session.commit()
@@ -193,9 +190,7 @@ class UserGameRatingView(Resource):
 
     def post(self):
         data = request.get_json()
-        dob= data["date_of_birth"]
-        date_of_birth1 = dob
-        new_user = USER_GAME_RATING(data['Rating'],data['last_name'],data['user_id'],data['game_id'])
+        new_user = USER_GAME_RATING(data['Rating'],data['user_id'],data['game_id'])
         
         db.session.add(new_user)
         db.session.commit()
