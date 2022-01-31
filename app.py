@@ -14,6 +14,16 @@ from flask_swagger_ui import get_swaggerui_blueprint
 
 
 app = Flask(__name__)
+
+
+POSTGRES = {
+    'user': 'emyaivzmxjfqri',
+    'pw': '53865c75009dd0825a7443958e2ee27503e9904725ef5d2eb3a373fab85b5e42',
+    'db': 'd7f9v0i42hkuut',
+    'host': 'ec2-34-203-91-150.compute-1.amazonaws.com',
+    'port': '5432',
+}
+
 app.debug = True
 app.config['SECRET_KEY'] = 'secret'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -21,22 +31,10 @@ Session(app)
 app.config["JWT_SECRET_KEY"] = "Authorization"  # Change this "super secret" with something else!
 jwt = JWTManager(app)
 
-### swagger specific ###
-SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.json'
-SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "Chat Room Api Implementation"
-    }
-)
-app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-### end swagger specific ###
 
 socketio = SocketIO(app, manage_session=False)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flask'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
